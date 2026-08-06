@@ -140,6 +140,10 @@ Build the customised Kathará Docker images that NIKA uses for fault injection:
 bash src/nika/net_env/utils/DockerFiles/build_dockers.sh
 ```
 
+On macOS with Apple Silicon, run the same command natively through Docker
+Desktop. The Ryu image pins a compatible upstream packaging toolchain so its
+`ovs` dependency can build for Linux ARM64; do not force an `amd64` platform.
+
 ### Environment variables
 
 Create a `.env` at the repo root:

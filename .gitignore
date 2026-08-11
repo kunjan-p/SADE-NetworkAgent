@@ -19,3 +19,4 @@ notebooks/
 /docs/paper/*.log
 /docs/paper/*.out
 uv.lock
+/runs/

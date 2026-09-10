@@ -8,7 +8,11 @@ tmp/
 .vscode/
 /.claude/
 **/result*/**
+# Secrets. `.env.*` matters as much as `.env`: this repo is public, and a
+# hand-made backup (.env.bak-0812, .env.local) is untracked-but-addable without
+# it, so a single `git add -A` would publish live OPENAI/ANTHROPIC keys.
 .env
+.env.*
 /.venv
 *.egg-info/
 /runtime/
@@ -20,3 +24,6 @@ notebooks/
 /docs/paper/*.out
 uv.lock
 /runs/
+
+# macOS
+.DS_Store

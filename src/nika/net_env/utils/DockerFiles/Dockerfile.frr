@@ -1,5 +1,24 @@
+# `nftables` is REQUIRED, not optional: NIKA's ACL faults go through
+# nft_add_table/nft_add_chain/nft_add_rule, which shell out to `nft`. Without the
+# binary each call returns "command not found" and the injector logs
+# "Injected ACL rule ..." anyway -- so bgp_acl_block, dns_port_blocked,
+# icmp_acl_block and http_acl_block all report success while injecting NOTHING,
+# and the agent is then scored against a network that was never broken.
+#
+# This was vendored from upstream NIKA at ~2026-05-03 (its Dockerfile then was
+# byte-identical to this one, minus this line). Upstream added nftables in
+# NIKA 0.2.0 -- see sands-lab/nika commits ce88fe93 / 67664cec -- alongside an
+# _ensure_nft_available() guard that raises instead of failing silently. This
+# takes upstream's package fix; the guard is not ported.
+#
+# Only `nftables` is taken from that upstream change. 0.2.0 also adds wireguard,
+# tcpdump, tshark and conntrack, which are DIAGNOSTIC tools the agents can use --
+# adding those would change what an agent can observe and break comparability
+# with already-published runs. nftables does not: iptables here is
+# iptables-nft (v1.8.9), so `nft list ruleset` only re-exposes rules `iptables -L`
+# already showed.
 FROM kathara/frr:latest
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends stress-ng isc-dhcp-server isc-dhcp-relay && \
+    apt-get install -y --no-install-recommends stress-ng isc-dhcp-server isc-dhcp-relay nftables && \
     apt-get clean && rm -rf /var/lib/apt/lists/*

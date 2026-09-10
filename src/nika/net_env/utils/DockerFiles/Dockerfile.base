@@ -1,5 +1,13 @@
+# See Dockerfile.frr for the full rationale. Short version: NIKA's ACL faults
+# shell out to `nft`, and without the binary they silently inject nothing while
+# reporting success. dns_port_blocked targets a DNS host, so it lands on THIS
+# image -- base-stress -- not on frr-stress. Both need it.
+#
+# Takes only `nftables` from upstream NIKA 0.2.0's package change, deliberately
+# not tcpdump/tshark/conntrack/python3-scapy: those are diagnostic tools that
+# would change what an agent can observe.
 FROM kathara/base:latest
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends stress-ng isc-dhcp-server isc-dhcp-relay && \
+    apt-get install -y --no-install-recommends stress-ng isc-dhcp-server isc-dhcp-relay nftables && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
